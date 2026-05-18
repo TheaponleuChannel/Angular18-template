@@ -1,0 +1,45 @@
+<div class="theme-switcher-container">
+  <!-- Dark/Light Mode Toggle -->
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menu"
+    class="mode-toggle-button"
+    [title]="getModeLabel()"
+  >
+    <mat-icon>{{ getModeIcon() }}</mat-icon>
+  </button>
+
+  <!-- Theme Menu -->
+  <mat-menu #menu="matMenu" class="theme-menu">
+    <!-- Dark/Light Mode Toggle Option -->
+    <div mat-menu-item class="mode-toggle-item">
+      <mat-slide-toggle
+        [(ngModel)]="isDarkMode"
+        (change)="toggleMode()"
+        class="mode-toggle"
+      >
+        <span class="toggle-label">Dark Mode</span>
+      </mat-slide-toggle>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Theme Selection Title -->
+    <button mat-menu-item disabled class="theme-header">
+      <strong>Select Theme</strong>
+    </button>
+
+    <!-- Theme Options -->
+    <button
+      *ngFor="let theme of availableThemes"
+      mat-menu-item
+      (click)="setTheme(theme)"
+      [class.active-theme]="currentTheme === theme"
+      class="theme-option"
+    >
+      <span class="theme-color-dot" [ngClass]="'theme-' + theme"></span>
+      {{ themeDisplayNames[theme] }}
+      <mat-icon *ngIf="currentTheme === theme" class="check-icon">check</mat-icon>
+    </button>
+  </mat-menu>
+</div>
