@@ -1,2 +1,190 @@
-<p>login works!</p>
-<button (click)="goToMainDashboard()">Login to dashboard</button>
+<div class="min-h-screen flex items-center justify-center overflow-hidden px-4">
+  <!-- Card -->
+  <div
+    class="login-card relative z-10 w-full max-w-[440px] rounded-2xl border border-grey-700 overflow-hidden"
+    [class.shake]="shakeForm"
+  >
+    <!-- Gradient top bar -->
+    <div
+      class="h-[3px] bg-gradient-to-r from-sky-500 via-blue-500 to-violet-500"
+    ></div>
+
+    <div class="px-10 py-10">
+      <!-- Logo & heading -->
+      <div
+        class="flex flex-col items-center text-center mb-9 fade-in-up"
+        style="--delay: 0s"
+      >
+        <div
+          class="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 logo-pulse"
+          style="
+            background: linear-gradient(135deg, #388ff3, #6d5af7);
+            box-shadow: 0 8px 24px rgba(56, 143, 243, 0.4);
+          "
+        >
+          <svg
+            class="w-7 h-7 text-white"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          </svg>
+        </div>
+        <h1
+          class="text-[1.75rem] font-bold tracking-tight text-white font-display"
+        >
+          Welcome back
+        </h1>
+        <p class="text-slate-400 text-sm mt-1 leading-relaxed">
+          Sign in with your credentials to continue
+        </p>
+      </div>
+
+      <!-- Angular Reactive Form -->
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()"
+        class="flex flex-col gap-1"
+        novalidate
+      >
+        <!-- Username field -->
+        <div class="fade-in-up" style="--delay: 0.12s">
+          <mat-form-field class="w-full">
+            <mat-label>Username</mat-label>
+            <mat-icon matPrefix>person_outline</mat-icon>
+            <input
+              matInput
+              formControlName="username"
+              placeholder="e.g. john_doe"
+              autocomplete="username"
+            />
+            @if (f["username"].touched && f["username"].hasError("required")) {
+              <mat-error> Username is required </mat-error>
+            }
+            @if (f["username"].touched && f["username"].hasError("minlength")) {
+              <mat-error> Minimum 3 characters required </mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Password field -->
+        <div class="fade-in-up" style="--delay: 0.2s">
+          <mat-form-field class="w-full">
+            <mat-label>Password</mat-label>
+            <mat-icon matPrefix class="field-icon">lock_outline</mat-icon>
+            <input
+              matInput
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="showPassword = !showPassword"
+            >
+              <mat-icon>{{
+                showPassword ? "visibility_off" : "visibility"
+              }}</mat-icon>
+            </button>
+            @if (f["password"].touched && f["password"].hasError("required")) {
+              <mat-error>Password is required</mat-error>
+            }
+            @if (f["password"].touched && f["password"].hasError("minlength")) {
+              <mat-error>Minimum 6 characters required</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Remember me + Forgot -->
+        <div
+          class="flex items-center justify-between mt-0 mb-4 fade-in-up"
+          style="--delay: 0.27s"
+        >
+          <mat-checkbox formControlName="rememberMe" class="custom-checkbox">
+            <span class="text-slate-400 text-sm select-none">Remember me</span>
+          </mat-checkbox>
+          <a
+            href="#"
+            class="text-sky-400 text-sm font-medium hover:text-sky-300 transition-colors duration-200"
+            (click)="$event.preventDefault()"
+          >
+            Forgot password?
+          </a>
+        </div>
+
+        <!-- Submit -->
+        <div class="fade-in-up" style="--delay: 0.33s">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            class="w-full text-[0.95rem] font-semibold tracking-wide text-white transition-all duration-300"
+            [disabled]="isLoading"
+          >
+            @if (!isLoading) {
+              <span class="flex justify-center items-center">
+                <span>Sign In</span>
+                <mat-icon class="!text-[18px] !w-[18px] !h-[18px] arrow-icon"
+                  >arrow_forward</mat-icon
+                >
+              </span>
+            } @else {
+              <span class="flex justify-center items-center">
+                <mat-progress-spinner
+                  diameter="20"
+                  mode="indeterminate"
+                  class="spinner-white"
+                >
+                </mat-progress-spinner>
+                <span>Signing in…</span>
+              </span>
+            }
+          </button>
+        </div>
+
+        <!-- Success banner -->
+        @if (loginSuccess) {
+          <div
+            class="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl border text-sm font-medium banner-pop bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+          >
+            <mat-icon class="!text-xl !w-5 !h-5 shrink-0"
+              >check_circle_outline</mat-icon
+            >
+            Login successful! Redirecting…
+          </div>
+        }
+
+        <!-- Error banner -->
+        @if (loginError) {
+          <div
+            class="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl border text-sm font-medium banner-pop bg-red-500/10 border-red-500/30 text-red-400"
+          >
+            <mat-icon class="!text-xl !w-5 !h-5 shrink-0"
+              >error_outline</mat-icon
+            >
+            Invalid credentials. Please try again.
+          </div>
+        }
+      </form>
+
+      <!-- Register link -->
+      <p
+        class="text-center text-slate-500 text-sm mt-8 fade-in-up"
+        style="--delay: 0.42s"
+      >
+        Don't have an account?
+        <a
+          href="#"
+          class="text-sky-400 font-medium hover:text-sky-300 transition-colors ml-1"
+          (click)="$event.preventDefault()"
+          >Create one free</a
+        >
+      </p>
+    </div>
+  </div>
+</div>

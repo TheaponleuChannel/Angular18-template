@@ -5,19 +5,25 @@ import {
   RouterStateSnapshot,
   Router,
 } from "@angular/router";
+import { CredentialService } from "../services/credential.service";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-  private router = inject(Router);
+  #router = inject(Router);
+  #credential = inject(CredentialService);
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const isLoggedIn = true;
-    if (isLoggedIn) {
+    if (this.#credential.isLoggedIn()) {
       return true;
     } else {
-      this.router.navigate(["/session/login"]);
+      this.#router.navigate(["/session/login"], {
+        queryParams: {
+          return: state.url
+        }
+      });
       return false;
     }
+
   }
 }
